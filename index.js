@@ -1,31 +1,26 @@
-const http = require("http");
-const fs = require("fs");
+const express = require("express");
+const app = express();
 
-const server = http.createServer((request, response) => {
-  let filename = "";
+app.get("/", (req, res) =>
+  res.sendFile("/home/kami/repos/odin-informational-site/index.html"),
+);
 
-  if (request.url === "/") {
-    filename = "index.html";
-  } else if (request.url === "/about") {
-    filename = "about.html";
-  } else if (request.url === "/contact-me") {
-    filename = "contact-me.html";
-  } else {
-    filename = "404.html";
+app.get("/about", (req, res) =>
+  res.sendFile("/home/kami/repos/odin-informational-site/about.html"),
+);
+
+app.get("/contact-me", (req, res) =>
+  res.sendFile("/home/kami/repos/odin-informational-site/contact-me.html"),
+);
+
+app.all("*splat", (req, res) =>
+  res.status(404).sendFile("/home/kami/repos/odin-informational-site/404.html"),
+);
+
+const PORT = 8080;
+app.listen(PORT, (error) => {
+  if (error) {
+    throw error;
   }
-
-  fs.readFile(filename, (err, data) => {
-    if (err) {
-      response.writeHead(500, { "content-type": "text/plain" });
-      response.end("");
-      return;
-    } else {
-      response.writeHead(filename === "404.html" ? 404 : 200, {
-        "content-type": "text/html",
-      });
-      response.end(data);
-    }
-  });
+  console.log(`Listening on port ${PORT}`);
 });
-
-server.listen(8080);
